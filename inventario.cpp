@@ -4,6 +4,7 @@
 #include <vector>   
 #include <algorithm>
 #include <stdlib.h>
+#include <iomanip>
 
 using namespace std;
 
@@ -17,12 +18,45 @@ const int MAX = 50;
 Producto inventario[MAX];
 int totalProductos=0;
 
+void ordenarPorPrecio() {
+        for(int i=0;i<totalProductos-1;i++)
+        for(int j=0;j<totalProductos-i-1;j++)
+            if(inventario[j].precio > inventario[j+1].precio)
+                swap(inventario[j], inventario[j+1]);
+}
+
 void guardarInventario(const string& archivo) {
         ofstream file(archivo, ios::binary | ios::trunc);
         if(!file) throw runtime_error("Error al guardar: " + archivo);
         file.write(reinterpret_cast<const char*>(inventario),
                 totalProductos * sizeof(Producto));
     }
+
+int BuscarPorNombre(const string& NombreBuscado){
+    for(int i=0; i<totalProductos; i++){
+        if(string(inventario[i].nombre)==NombreBuscado){
+            return i;
+        }
+    }
+    return -1;
+}
+
+void MostrarInventarioTabla(){
+    cout << "\n================ INVENTARIO ================" << endl;
+    cout << left << setw(10) << "codigo"
+         << setw(20) << "nombre"
+         << setw(10) << "Precio" 
+         << setw(10) << "Stock" << endl;
+    cout << "--------------------------------------------------" << endl;
+
+    for(int i = 0; i<totalProductos; i++){
+        cout << left << setw(10) << inventario[i].codigo
+             << setw(20) << inventario[i].nombre
+             << setw(10) << inventario[i].precio
+             << setw(10) << inventario[i].stock << endl;
+    }
+    cout << "==================================================\n" << endl;
+}
 
 int main(){
     const string ARCH = "inventario.dat";
@@ -50,6 +84,23 @@ int main(){
         guardarInventario(ARCH);
         
         cout << "\nLos 5 productos se guardaron exitosamente" << endl;
+
+        ordenarPorPrecio();
+        MostrarInventarioTabla();
+
+        string nombrebuscar;
+        cout << "Ingrese el nombre del producto que desea buscar; ";
+        cin >> nombrebuscar;
+
+        int indice = BuscarPorNombre(nombrebuscar);
+        if (indice!=-1){
+            cout << "Producto encontrado"<<endl;
+            cout << "El producto '"<<inventario[indice].nombre
+                 << "' cuesta $"<<inventario[indice].precio
+                 << " y hay "<<inventario[indice].stock<< " en stock."<<endl;
+        }else {
+            cout << "El producto '"<< nombrebuscar<< "' no existe en el inventario "<<endl;
+        }
     } catch (const runtime_error& e){
         cerr << "erro: "<<e.what() << endl;
     }
