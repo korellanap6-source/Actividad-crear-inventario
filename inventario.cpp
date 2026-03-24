@@ -123,6 +123,34 @@ int main(){
 
     sort(vProductos.begin(), vProductos.end(), compararPorCodigo);
     cout << "El vector STL ha sido ordenado por codigo."<<endl;
+
+    cout << "\n--- Modificar Precio (Acceso Aleatorio) ---" << endl;
+    int indiceMod;
+
+    cout << "Ingrese el indice del producto a modificar (0 a "<< vProductos.size()-1<<"): ";
+    cin>>indiceMod;
+
+    if(indiceMod >= 0 && indiceMod < vProductos.size()){
+        float  nuevoPrecio;
+        cout << "El producto actual es: " << vProductos[indiceMod].nombre<< " $"<< vProductos[indiceMod].precio << endl;
+        cout << "ingrese el nuevo precio: ";
+        cin >> nuevoPrecio;
+
+        vProductos[indiceMod].precio=nuevoPrecio;
+
+        fstream archivo(ARCH, ios::in | ios::out | ios::binary);
+        if(!archivo) throw runtime_error("No se pudo abrir para modificar");
+
+        int posicionfisica= indiceMod*sizeof(Producto);
+
+        archivo.seekp(posicionfisica);
+
+        archivo.write(reinterpret_cast<const char*>(&vProductos[indiceMod]), sizeof(Producto));
+        cout << "Precio modificado exitosamente en el archivo" << endl;
+    }else {
+        cout << "Indice fuera de rango." << endl;
+    }
+
     } catch (const runtime_error& e){
         cerr << "erro: "<<e.what() << endl;
     }
