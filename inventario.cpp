@@ -70,6 +70,10 @@ void cargarInventario(const string& arch, vector<Producto>& vProd){
     }
 }
 
+bool compararPorCodigo(const Producto& a, const Producto& b){
+    return a.codigo < b.codigo;
+}
+
 int main(){
     const string ARCH = "inventario.dat";
     vector <Producto> vProductos;
@@ -116,6 +120,9 @@ int main(){
 
     cargarInventario(ARCH, vProductos);
     cout<<"\nSe cargaron "<< vProductos.size()<<" productos al vector STL"<<endl;
+
+    sort(vProductos.begin(), vProductos.end(), compararPorCodigo);
+    cout << "El vector STL ha sido ordenado por codigo."<<endl;
     } catch (const runtime_error& e){
         cerr << "erro: "<<e.what() << endl;
     }
