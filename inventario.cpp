@@ -58,6 +58,18 @@ void MostrarInventarioTabla(){
     cout << "==================================================\n" << endl;
 }
 
+void cargarInventario(const string& arch, vector<Producto>& vProd){
+    ifstream file(arch, ios::binary);
+    if(!file) throw runtime_error("no existe o no se puede abrir: "+ arch);
+
+    vProd.clear();
+    Producto P;
+
+    while(file.read(reinterpret_cast<char*>(&P), sizeof(P))){
+        vProd.push_back(P);
+    }
+}
+
 int main(){
     const string ARCH = "inventario.dat";
     vector <Producto> vProductos;
@@ -101,6 +113,9 @@ int main(){
         }else {
             cout << "El producto '"<< nombrebuscar<< "' no existe en el inventario "<<endl;
         }
+
+    cargarInventario(ARCH, vProductos);
+    cout<<"\nSe cargaron "<< vProductos.size()<<" productos al vector STL"<<endl;
     } catch (const runtime_error& e){
         cerr << "erro: "<<e.what() << endl;
     }
